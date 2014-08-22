@@ -53,6 +53,7 @@ def content_object_init(instance):
                         fig['style'] += extra_style
                     else:
                         fig['style'] = extra_style
+                    # add class: align-center, for example
                     if img.get('class'):
                         fig['class'] = img.get('class')
 
