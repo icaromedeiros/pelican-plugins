@@ -34,7 +34,7 @@ def content_object_init(instance):
                 src = instance.settings['PATH'] + '/images/' + os.path.split(img['src'])[1]
                 im = Image.open(src)
                 extra_style = 'width: {}px; height: auto;'.format(im.size[0])
-                extra_style += 'background-color: #E0E0E0; border-radius: 5%; padding: 10px'
+                extra_style += 'background-color: #E0E0E0; border-radius: 5%; padding: 10px;'
 
                 if instance.settings['RESPONSIVE_IMAGES']:
                     extra_style += ' max-width: 100%;'
