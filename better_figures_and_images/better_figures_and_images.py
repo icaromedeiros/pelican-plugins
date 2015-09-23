@@ -52,7 +52,7 @@ def content_object_init(instance):
                     logger.warning('Better Fig. Error: img_path should start with either {filename}, |filename| or /static')
 
                 # Build the source image filename
-                src = instance.settings['PATH'] + img_path + '/' + img_filename
+                src = instance.settings['PATH'] + "/" + img_path + '/' + img_filename
 
                 logger.debug('Better Fig. src: %s', src)
                 if not (path.isfile(src) and access(src, R_OK)):
