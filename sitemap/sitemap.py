@@ -47,7 +47,7 @@ XML_FOOTER = """
 
 def format_date(date):
     if date.tzinfo:
-        tz = date.strftime('%s')
+        tz = date.strftime('%z')
         tz = tz[:-2] + ':' + tz[-2:]
     else:
         tz = "-00:00"
@@ -134,6 +134,10 @@ class SitemapGenerator(object):
         if getattr(page, 'status', 'published') != 'published':
             return
 
+        # We can disable categories/authors/etc by using False instead of ''
+        if not page.save_as:
+            return
+
         page_path = os.path.join(self.output_path, page.save_as)
         if not os.path.exists(page_path):
             return
@@ -156,11 +160,16 @@ class SitemapGenerator(object):
             pri = self.priorities['indexes']
             chfreq = self.changefreqs['indexes']
 
+        pageurl = '' if page.url == 'index.html' else page.url
+        
+        #Exclude URLs from the sitemap:
+        sitemapExclude = []
 
         if self.format == 'xml':
-            fd.write(XML_URL.format(self.siteurl, page.url, lastmod, chfreq, pri))
+            if pageurl not in sitemapExclude:
+                fd.write(XML_URL.format(self.siteurl, pageurl, lastmod, chfreq, pri))
         else:
-            fd.write(self.siteurl + '/' + page.url + '\n')
+            fd.write(self.siteurl + '/' + pageurl + '\n')
 
     def get_date_modified(self, page, default):
         if hasattr(page, 'modified'):
@@ -174,9 +183,9 @@ class SitemapGenerator(object):
         for (wrapper, articles) in wrappers:
             lastmod = datetime.min.replace(tzinfo=self.timezone)
             for article in articles:
-                lastmod = max(lastmod, article.date)
+                lastmod = max(lastmod, article.date.replace(tzinfo=self.timezone))
                 try:
-                    modified = self.get_date_modified(article, datetime.min.replace(tzinfo=self.timezone));
+                    modified = self.get_date_modified(article, datetime.min).replace(tzinfo=self.timezone)
                     lastmod = max(lastmod, modified)
                 except ValueError:
                     # Supressed: user will be notified.
